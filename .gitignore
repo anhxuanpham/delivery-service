@@ -1,0 +1,9 @@
+.idea
+*.pyc
+code/config
+test
+.vscode
+venv
+.env
+keys
+env
