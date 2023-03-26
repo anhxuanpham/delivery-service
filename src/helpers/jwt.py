@@ -55,7 +55,7 @@ def gen_refresh_token(token: str, obj_type: str = 'users') -> str:
         - Saving refresh token. After use, The system must delete it;
     """
     redis_single.setex(f'tokens:refresh_tokens:{obj_type}:{encoded_refresh_token}',
-                       DefaultConfig.TOKEN_EXP_TIME + DefaultConfig.REFRESH_TOKEN_EXP_TIME, token)
+                       DefaultConfig.TOKEN_EXP_TIME + DefaultConfig.REFRESH_TOKEN_EXP_TIME, encoded_refresh_token)
 
     return encoded_refresh_token
 

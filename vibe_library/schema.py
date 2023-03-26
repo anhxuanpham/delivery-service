@@ -87,3 +87,32 @@ class Message(object):
                 self.id == other.id and
                 self.retry == other.retry
         )
+    
+
+class BaseResponse():
+    @pre_load
+    def load_id(self, in_data, **kwargs):
+        if in_data.get('_id'):
+            in_data['_id'] = str(in_data['_id'])
+        return in_data
+
+    @pre_load
+    def load_datetime(self, in_data, **kwargs):
+        for key, value in in_data.items():
+            if isinstance(value, datetime):
+                in_data[key] = value.replace(tzinfo=timezone.utc).timestamp()
+        return in_data
+
+    @classmethod
+    def load_response(cls, payload: dict = {}):
+        try:
+            try:
+                result = cls().load(payload)
+                return result
+            except:
+                sentry_sdk.capture_exception()
+                traceback.print_exc()
+                return {}
+        except:
+            sentry_sdk.capture_exception()
+            traceback.print_exc()

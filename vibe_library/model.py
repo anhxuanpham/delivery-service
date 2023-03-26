@@ -26,7 +26,7 @@ class BaseModel(MongoModel):
     def get_with_key_sync(cls,
                           value,
                           key_sync='_id',
-                          db_name: str = 'teship',
+                          db_name: str = 'vibe',
                         #   with_cache=False,
                           one=True
                           ):
@@ -43,7 +43,7 @@ class BaseModel(MongoModel):
                     key_sync: value
                 }
                 _val_key = value
-            _key = f"teship:{db_name}/{cls.Meta.collection_name}:{_val_key}"
+            _key = f"vibe:{db_name}/{cls.Meta.collection_name}:{_val_key}"
 
             def get_db():
                 if one:

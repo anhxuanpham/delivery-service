@@ -30,12 +30,11 @@ def handle_response(schema=None, mimetype=None, caching=False, timeout=604800, d
     def decorator(f):
         @wraps(f)
         def wrapper(*args, **kwargs):
-            # @request_exception(default=default, mimetype=mimetype)
+            @request_exception(default=default, mimetype=mimetype)
             def run_controller():
                 if mimetype and mimetype == ReqMimetype.STREAM:
                     return f(*args, **kwargs)
 
-                # save cache request 
                 # @cache_request(
                 #     keep_timeout=timeout,
                 #     key_prefix=request.path

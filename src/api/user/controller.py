@@ -2,12 +2,13 @@
 # Created at 24/03/2023
 # Author Khanh
 
-
+import bcrypt
 from flask import g, request
 from schemas.auth import FormUserLoginSchema
 from src.services.user import UserService
 import vibe_library.decorators as deco
 
+from vibe_library.handlerespon import make_response
 
 @deco.handle_response()
 @deco.load_data(FormUserLoginSchema)
@@ -16,10 +17,13 @@ def login_cl():
         - Control the login action of user  
     """
     _user_data = g.data 
-    print('----_user_data----', _user_data)
-    print('----function login cl has work-----')
+
+    # check_password = bcrypt.hashpw('1234567'.encode('utf8'), bcrypt.gensalt(10)).decode('utf-8')
+
     result = UserService.login(
         phone = _user_data.get('phone'),
-        password = _user_data.get('password')
+        password = _user_data.get('password'),
     )
-    return 'hello'
+    return make_response(
+        data=result
+    )

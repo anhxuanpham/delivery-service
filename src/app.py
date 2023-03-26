@@ -15,6 +15,7 @@ from sentry_sdk.integrations.flask import FlaskIntegration
 from flask import Flask, request, jsonify
 from flask_babel import Babel
 from src.api import rest_app
+from vibe_library.logger import Logger
 from .config import DefaultConfig
 from jsonschema import ValidationError
 
@@ -36,7 +37,7 @@ def create_app(config=None, app_name=None, blueprints=None):
     configure_app(app, config)
     # configure_hook(app)
     configure_blueprints(app, blueprints)
-    # configure_extensions(app)
+    configure_extensions(app)
     # configure_template_filters(app)
     # configure_error_handlers(app)
     # configure_logging_level()
@@ -78,21 +79,6 @@ def configure_extensions(app):
     Logger.debug('Init Redis cache successfully')
     # Flask Babel
     babel = Babel(app)
-
-    # Sentry
-    if DefaultConfig.SENTRY_DSN:
-        sentry_sdk.init(
-            dsn=DefaultConfig.SENTRY_DSN,
-            integrations=[FlaskIntegration()],
-            server_name=DefaultConfig.PROJECT
-        )
-
-        capture_message('{} starts'.format(DefaultConfig.PROJECT))
-
-    @babel.localeselector
-    def get_locale():
-        accept_languages = app.config.get('ACCEPT_LANGUAGES')
-        return request.accept_languages.best_match(accept_languages)
 
 
 def configure_blueprints(app, blueprints):
