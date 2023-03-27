@@ -7,6 +7,7 @@ from datetime import datetime
 
 from bson import ObjectId
 from pymodm import fields, MongoModel, connection
+from .utilities import is_oid, get_current_time
 
 SIZE = 10000
 class BaseModel(MongoModel):
@@ -66,4 +67,61 @@ class BaseModel(MongoModel):
         except:
             # capture_exception()
             traceback.print_exc()
+            return {}
+    
+    @classmethod
+    def init_row(cls, payload):
+        _init = {}
+        for field in cls._mongometa.get_fields():
+            if field.mongo_name == '_id':
+                if not isinstance(payload.get('_id'), ObjectId):
+                    if is_oid(payload.get(field.mongo_name)):
+                        _init[field.mongo_name] = ObjectId(payload.get(field.mongo_name))
+                    else:
+                        _init[field.mongo_name] = ObjectId()
+            else:
+                if field.mongo_name in ['created_time', 'updated_time']:
+                    if not isinstance(field.mongo_name, datetime):
+                        if isinstance(field.mongo_name, (float, int)):
+                            _init[field.mongo_name] = datetime.fromtimestamp()
+                        else: 
+                            _init[field.mongo_name] = get_current_time()
+                else:
+                    _init[field.mongo_name] = payload.get(field.mongo_name, field.default)
+        return _init
+
+    @classmethod
+    def insert_data(cls, payload):
+        return cls(**cls.init_row(payload)).save()
+    
+    @classmethod
+    def get_by_filter(cls, filter={}, options={}, with_cache=False):
+        try:
+            _keys = list(filter.keys())
+            __option_keys = list(options.keys())
+            print('------_keys----', _keys)
+            print('------_option_keys----', __option_keys)
+            def get_db():
+                _query = [{
+                    '$match' : filter
+                }]
+                if 'sort' in __option_keys:
+                    _query.append({
+                        '$sort': __option_keys.get('sort')
+                    })
+                if 'offset' in __option_keys:
+                    _query.append({
+                        '$skip': options.get('offset')
+                    })
+                if 'limit' in __option_keys:
+                    _query.append({
+                        '$limit': options.get('limit')
+                    })
+                values = cls.objects.aggregate(*_query)
+                values = list(values)
+                return [x for x in values if not x.get('deleted')]
+            
+            return get_db()
+        
+        except cls.DoesNotExist:
             return {}

@@ -3,7 +3,9 @@
 # Author Khanh
 
 from .user import rest_user
+from .order import rest_order
 
 rest_app = (
     rest_user,
+    rest_order,
 )
