@@ -70,5 +70,5 @@ def gen_user_token(user_info: dict) -> str:
         'phone': user_info.get('phone'),
         'email': user_info.get('email'),
         'store_id': user_info.get('store_id'),
-        'name': user_info.get('name')
+        'name': user_info.get('name'),
     })

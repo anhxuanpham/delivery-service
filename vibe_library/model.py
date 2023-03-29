@@ -96,18 +96,19 @@ class BaseModel(MongoModel):
     
     @classmethod
     def get_by_filter(cls, filter={}, options={}, with_cache=False):
+        # print('------------options------', options)
         try:
             _keys = list(filter.keys())
             __option_keys = list(options.keys())
-            print('------_keys----', _keys)
-            print('------_option_keys----', __option_keys)
+            # print('------_keys----', _keys)
+            # print('------_option_keys----', __option_keys)
             def get_db():
                 _query = [{
                     '$match' : filter
                 }]
                 if 'sort' in __option_keys:
                     _query.append({
-                        '$sort': __option_keys.get('sort')
+                        '$sort': options.get('sort')
                     })
                 if 'offset' in __option_keys:
                     _query.append({
@@ -124,4 +125,54 @@ class BaseModel(MongoModel):
             return get_db()
         
         except cls.DoesNotExist:
+            return {}
+        
+    @classmethod
+    def update_one(cls, filter, update_data):
+        try:
+            _keys = update_data.keys()
+            _delete_keys = ['created_by', 'created_time', '_id']
+            for _key in _delete_keys:
+                if _key in _keys:
+                    del update_data[_key]
+            update_data['updated_time'] = get_current_time()
+            return cls.current().find_one_and_update(filter=filter, update={
+                '$set': update_data
+            })
+        except cls.DoesNotExist:
+            return []
+        # except Exception as e:
+        #     capture_exception(e)
+        #     traceback.print_exc()
+        #     return []
+
+
+    @classmethod
+    def get_by_id(cls, _id, with_cache=False):
+        try:
+            def get_db():
+                try:
+                    value = cls.objects.get({'_id': fields.ObjectId(_id)})
+                    if value:
+                        _json_value = value.to_dict()
+                        if not _json_value.get('deleted'):
+                            return _json_value
+                    return {}
+                except cls.DoesNotExist:
+                    return {}
+                # except:
+                #     sentry_sdk.capture_exception()
+                #     traceback.print_exc()
+                return {}
+
+            # if with_cache:
+            #     @cache_id(key_prefix=cls.Meta.collection_name)
+            #     def get_cache_by_id(with_id):
+            #         return get_db()
+
+            #     return get_cache_by_id(_id)
+            # return get_db()
+        except:
+            # capture_exception()
+            traceback.print_exc()
             return {}

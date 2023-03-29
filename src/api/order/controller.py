@@ -4,7 +4,7 @@
 
 import bcrypt
 from flask import g, request
-from schemas.order import FormOrderCreateSchema, FormGetOrdersSchema
+from schemas.order import FormOrderCreateSchema, FormGetOrdersSchema, GetListOrderResponseSchema
 from src.services.order import OrderService
 from src.services.user import UserService
 import vibe_library.decorators as deco
@@ -18,7 +18,6 @@ def order_cr():
         - Control the create action of order  
     """
     order_data = g.data
-    print('---order----', order_data)
     result = OrderService.save(payload=order_data)
     if result:
         return True
@@ -33,5 +32,11 @@ def get_list_order_by_store():
     limit = request.args.get('limit', 10, type=int)
     offset = request.args.get('offset', 0, type=int)
 
-    # orders, total = 
-    return 'list order by store'
+    orders, total = OrderService.get_list_orders(_id=_id, offset=offset, limit=limit)
+    if not isinstance(orders, list):
+        orders = []
+    
+    return GetListOrderResponseSchema.load_response({
+        'orders': orders,
+        'total': total
+    })

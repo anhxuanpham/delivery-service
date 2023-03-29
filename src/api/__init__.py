@@ -4,8 +4,10 @@
 
 from .user import rest_user
 from .order import rest_order
+from .store import rest_store
 
 rest_app = (
     rest_user,
     rest_order,
+    rest_store,
 )

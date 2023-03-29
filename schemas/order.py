@@ -2,7 +2,7 @@
 # Created at 27/03/2023
 # Author Khanh
 
-from marshmallow import Schema, EXCLUDE, fields, pre_load
+from marshmallow import Schema, EXCLUDE, INCLUDE, fields, pre_load
 
 from vibe_library.schema import BaseResponse
 
@@ -28,3 +28,41 @@ class FormGetOrdersSchema(Schema):
         unknown = EXCLUDE
     
     _id = fields.Str(required=True)
+
+
+class ProductOrderResponse(Schema, BaseResponse):
+    class Meta:
+        unknown: EXCLUDE
+
+    product_name = fields.String(allow_none=True)
+    product_price = fields.Float(allow_none=True)
+    quantity = fields.Integer(allow_none=True)
+
+
+class OrderResponseSchema(Schema, BaseResponse):
+    class Meta:
+        unknown = EXCLUDE
+    
+    _id = fields.String(required=True)
+    cust_name = fields.String(allow_none=True)
+    cust_phone = fields.String(allow_none=True)
+    address = fields.String(allow_none=True)
+
+    store_id = fields.String(allow_none=True)
+    user_id = fields.String(allow_none=True)
+    product_list = fields.List(fields.Nested(ProductOrderResponse()))
+    fee_ship = fields.Float(required=True)
+    # order_code = fields.String(allow_none=True)
+
+    total_amount = fields.Float(required=True)
+    status = fields.String(allow_none=True)
+    extract = fields.Dict(allow_none=True, missing={})
+    created_time = fields.Float(required=True)
+
+
+class GetListOrderResponseSchema(Schema, BaseResponse):
+    class Meta:
+        unknown = EXCLUDE
+    
+    orders = fields.List(fields.Nested(OrderResponseSchema()))
+    total = fields.Integer()
