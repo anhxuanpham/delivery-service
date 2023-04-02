@@ -101,3 +101,31 @@ def load_data(BaseSchema):
         return wrapper
 
     return decorator
+
+def get_token_info(token):
+    try:
+        return jwt.decode(token, algorithms='RS256', options={"verify_signature": False})
+    except:
+        return False
+
+def get_token():
+    _request_token = request.headers.get('Authorization')
+    if not _request_token or 'Bearer ' not in _request_token:
+        _request_token = request.args.get('access_token', type=str)
+
+        if not _request_token:
+            return None, None
+    else:
+        _request_tokens = _request_token.split(' ')
+        if len(_request_tokens) < 1:
+            return None, None
+        _request_token = _request_tokens[1]
+
+        # Get user token on Redis user info
+        _info = get_token_info(_request_token)
+        if not isinstance(_info, dict):
+            return None, None
+        if not _info.get('payload'):
+            return None, None
+        
+        return _info.get('payload'), _request_token

@@ -33,3 +33,9 @@ class FormUserRegisterSchema(Schema):
     address = fields.Str(required=True)
     permission = fields.Str(required=True)
 
+
+class FormRefreshToken(Schema):
+    class Meta:
+        unknown = EXCLUDE
+
+    refresh_token = fields.Str(required=True)

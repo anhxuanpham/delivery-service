@@ -44,3 +44,14 @@ class ExceptionUserAccountNotExists(RequestException):
         )
 
     pass
+
+class TokenNotAccept(RequestException):
+    def __init__(self, *args: object) -> None:
+        super().__init__(*args)
+        self.response = make_response(
+            error_code='ERROR_REFRESH_TOKEN',
+            status=Constants.STATUS_NOT_OK,
+            msg='This refresh token don\'t accept'
+        )
+
+    pass

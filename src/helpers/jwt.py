@@ -72,3 +72,19 @@ def gen_user_token(user_info: dict) -> str:
         'store_id': user_info.get('store_id'),
         'name': user_info.get('name'),
     })
+
+@handle_exception()
+def check_refresh_token(token_refresh: str, obj_type: str, is_delete=False):
+    _key = f'tokens:refresh_tokens:{obj_type}:{token_refresh}'
+    _check = redis_single.exists(_key)
+    if _check and is_delete:
+        redis_single.delete(_key)
+    return _check
+
+@handle_exception()
+def remove_token(payload: dict, obj_type: str):
+    _key = deco.gen_auth_key(
+        obj_type=obj_type,
+        payload=payload
+    )
+    redis_single.delete(_key)
