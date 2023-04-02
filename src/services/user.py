@@ -7,6 +7,7 @@ from src.exceptions.auth import ExceptionUserAccountNotExists, ExceptionUserHasB
 from src.helpers.jwt import gen_user_token, gen_refresh_token
 from src.models.user import UserModel
 from bcrypt import checkpw
+import bcrypt
 
 class UserService(object):
     @staticmethod
@@ -37,3 +38,26 @@ class UserService(object):
             'token': token,
             'refresh_token': refresh_token
         }
+    
+    @classmethod
+    def register(cls, name: str, phone: str, password: str, store_id: str, email: str, address: str, permission: str):
+
+        _find_user = UserModel.check_is_exist(filter={
+            'phone': phone
+        }, with_cache=False)
+        if _find_user == True:
+            return 'ALREADY_EXISTS'
+        else:
+            _payload = {
+                "name": name,
+                "phone": phone,
+                "password": bcrypt.hashpw(password.encode('utf8'), bcrypt.gensalt(10)).decode('utf-8'),
+                "store_id": store_id,
+                "email": email,
+                "address": address,
+                "permission": permission
+            }
+            result = UserModel.insert_data(payload=_payload)
+            if result:
+                return True
+            return False

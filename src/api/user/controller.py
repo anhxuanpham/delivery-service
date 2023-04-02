@@ -4,7 +4,7 @@
 
 import bcrypt
 from flask import g, request
-from schemas.auth import FormUserLoginSchema, UserAuthSchema
+from schemas.auth import FormUserLoginSchema, UserAuthSchema, FormUserRegisterSchema
 from src.services.user import UserService
 import vibe_library.decorators as deco
 
@@ -25,7 +25,22 @@ def login_cl():
         phone = _user_data.get('phone'),
         password = _user_data.get('password'),
     )
-    # return make_response(
-    #     data=result
-    # )
     return UserAuthSchema.load_response(result)
+
+@deco.handle_response()
+@deco.load_data(FormUserRegisterSchema)
+def register_cl():
+    """ 
+        - Control the register action of user
+    """
+    _data = g.data
+    result = UserService.register(
+        name=_data.get('name'),
+        phone=_data.get('phone'),
+        password=_data.get('password'),
+        store_id=_data.get('store_id'),
+        email=_data.get('email'),
+        address=_data.get('address'),
+        permission=_data.get('permission'),
+    )
+    return result

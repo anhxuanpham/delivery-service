@@ -19,3 +19,17 @@ class UserAuthSchema(Schema, BaseResponse):
 
     token = fields.Str(required=True)
     refresh_token = fields.Str(required=True)
+
+
+class FormUserRegisterSchema(Schema):
+    class Meta:
+        unknown = EXCLUDE
+    
+    name = fields.Str(required=True)
+    phone = fields.Str(required=True)
+    password = fields.Str(required=True)
+    store_id = fields.Str(required=True)
+    email = fields.Str(required=True)
+    address = fields.Str(required=True)
+    permission = fields.Str(required=True)
+

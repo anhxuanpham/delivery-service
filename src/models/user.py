@@ -19,4 +19,4 @@ class UserModel(BaseModel):
     address = fields.CharField(default='', blank=True)
     password = fields.CharField(default='', blank=True)
     permission = fields.CharField(default='', blank=True)
-    status = fields.CharField(default='', blank=True)
+    status = fields.CharField(default='active', blank=True)

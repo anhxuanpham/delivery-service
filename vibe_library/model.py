@@ -182,11 +182,13 @@ class BaseModel(MongoModel):
             _keys = list(filter.keys())
 
             def get_db():
-                value = cls.objects.get(filter)
+                value = cls.objects.values().get(filter)
                 if value:
-                    _json_value = value.to_dict()
-                    if not _json_value.get('deleted'):
-                        return _json_value
+                    # _json_value = value.to_dict()
+                    # if not _json_value.get('deleted'):
+                    #     return _json_value
+                    if not value.get('deleted'):
+                        return value
                 return {}
 
             # if with_cache:
@@ -204,3 +206,30 @@ class BaseModel(MongoModel):
             traceback.print_exc()
             return {}
     
+
+    @classmethod
+    def check_is_exist(cls, filter, with_cache=False):
+        try:
+            _keys = list(filter.keys())
+
+            def get_db():
+                value = cls.objects.values().get(filter)
+                if value:
+                    if not value.get('deleted'):
+                        return True
+                return False
+
+            # if with_cache:
+            #     @cache_filter(key_prefix=cls.Meta.collection_name, key_fields=_keys, options=[])
+            #     def get_cache_by_filter(*args, **kwargs):
+            #         return get_db()
+
+            #     return get_cache_by_filter(**filter, options=[])
+            return get_db()
+
+        except cls.DoesNotExist:
+            return False
+        except:
+            # capture_exception()
+            traceback.print_exc()
+            return False

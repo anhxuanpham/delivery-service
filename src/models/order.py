@@ -24,4 +24,4 @@ class OrderModel(BaseModel):
 
     order_code = fields.CharField(default='', blank=True)
     extract = fields.DictField(blank=True, default={})
-    status = fields.CharField(default='', blank=True)
+    status = fields.CharField(default='wait', blank=True)
