@@ -38,6 +38,24 @@ class ProductOrderResponse(Schema, BaseResponse):
     product_price = fields.Float(allow_none=True)
     quantity = fields.Integer(allow_none=True)
 
+class OrderDetalResponseSchema(Schema, BaseResponse):
+    class Meta:
+        unknown = EXCLUDE
+    _id = fields.String(required=True)
+    cust_name = fields.String(allow_none=True)
+    cust_phone = fields.String(allow_none=True)
+    address = fields.String(allow_none=True)
+
+    store_id = fields.String(allow_none=True)
+    user_id = fields.String(allow_none=True)
+    product_list = fields.List(fields.Nested(ProductOrderResponse()))
+    fee_ship = fields.Float(required=True)
+    order_code = fields.String(allow_none=True)
+
+    total_amount = fields.Float(required=True)
+    status = fields.String(allow_none=True)
+    extract = fields.Dict(allow_none=True, missing={})
+    created_time = fields.Float(required=True)
 
 class OrderResponseSchema(Schema, BaseResponse):
     class Meta:
@@ -50,13 +68,13 @@ class OrderResponseSchema(Schema, BaseResponse):
 
     store_id = fields.String(allow_none=True)
     user_id = fields.String(allow_none=True)
-    product_list = fields.List(fields.Nested(ProductOrderResponse()))
+    # product_list = fields.List(fields.Nested(ProductOrderResponse()))
     fee_ship = fields.Float(required=True)
     # order_code = fields.String(allow_none=True)
 
     total_amount = fields.Float(required=True)
     status = fields.String(allow_none=True)
-    extract = fields.Dict(allow_none=True, missing={})
+    # extract = fields.Dict(allow_none=True, missing={})
     created_time = fields.Float(required=True)
 
 

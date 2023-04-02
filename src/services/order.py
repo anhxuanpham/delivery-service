@@ -3,7 +3,7 @@
 # Author Khanh
 
 from src.models.order import OrderModel
-
+from bson import ObjectId
 class OrderService(object):
 
     @staticmethod
@@ -14,14 +14,14 @@ class OrderService(object):
         return OrderModel.insert_data(payload=payload)
     
     @staticmethod
-    def get_list_orders(_id: str,
+    def get_list_orders(store_id: str,
                         offset: int,
                         limit: int
                         ) -> list:
         
         filter = {}
-        if _id:
-            filter['store_id'] = _id
+        if store_id:
+            filter['store_id'] = store_id
 
         orders = OrderModel.get_by_filter(
             filter=filter,
@@ -40,3 +40,9 @@ class OrderService(object):
         else:
             return orders, offset + limit + limit // 2
         
+    
+    @staticmethod
+    def order_detail(_id: str):        
+        order = OrderModel.get_by_id(_id, with_cache=False)
+        return order
+

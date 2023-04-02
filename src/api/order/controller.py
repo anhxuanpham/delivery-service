@@ -4,7 +4,7 @@
 
 import bcrypt
 from flask import g, request
-from schemas.order import FormOrderCreateSchema, FormGetOrdersSchema, GetListOrderResponseSchema
+from schemas.order import FormOrderCreateSchema, FormGetOrdersSchema, GetListOrderResponseSchema, OrderDetalResponseSchema
 from src.services.order import OrderService
 from src.services.user import UserService
 import vibe_library.decorators as deco
@@ -28,11 +28,11 @@ def order_cr():
 @deco.handle_response()
 def get_list_order_by_store():
 
-    _id = request.args.get('_id', '', type=str)
+    store_id = request.args.get('store_id', '', type=str)
     limit = request.args.get('limit', 10, type=int)
     offset = request.args.get('offset', 0, type=int)
 
-    orders, total = OrderService.get_list_orders(_id=_id, offset=offset, limit=limit)
+    orders, total = OrderService.get_list_orders(store_id=store_id, offset=offset, limit=limit)
     if not isinstance(orders, list):
         orders = []
     
@@ -40,3 +40,11 @@ def get_list_order_by_store():
         'orders': orders,
         'total': total
     })
+
+@deco.handle_response()
+def get_detail_order():
+
+    id = request.args.get('id', '', type=str)
+    order = OrderService.order_detail(_id=id)
+    
+    return OrderDetalResponseSchema.load_response(order)
