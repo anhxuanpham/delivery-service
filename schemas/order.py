@@ -84,3 +84,11 @@ class GetListOrderResponseSchema(Schema, BaseResponse):
     
     orders = fields.List(fields.Nested(OrderResponseSchema()))
     total = fields.Integer()
+
+class UpdateStatusOrderSchema(Schema, BaseResponse):
+    class Meta:
+        unknown = EXCLUDE
+    
+    _id = fields.String(required=True)
+    status = fields.String(required=True)
+    message = fields.String(required=False)

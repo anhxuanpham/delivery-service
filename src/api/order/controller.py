@@ -4,7 +4,7 @@
 
 import bcrypt
 from flask import g, request
-from schemas.order import FormOrderCreateSchema, FormGetOrdersSchema, GetListOrderResponseSchema, OrderDetalResponseSchema
+from schemas.order import FormOrderCreateSchema, FormGetOrdersSchema, GetListOrderResponseSchema, OrderDetalResponseSchema, UpdateStatusOrderSchema
 from src.services.order import OrderService
 from src.services.user import UserService
 import vibe_library.decorators as deco
@@ -46,5 +46,16 @@ def get_detail_order():
 
     id = request.args.get('id', '', type=str)
     order = OrderService.order_detail(_id=id)
-    
     return OrderDetalResponseSchema.load_response(order)
+
+
+@deco.handle_response()
+@deco.load_data(UpdateStatusOrderSchema)
+def update_status():
+    _data = g.data 
+    _id = _data.get('_id')
+    status = _data.get('status')
+    message = _data.get('message', '')
+
+    result = OrderService.update_order(_id=_id, status=status, message=message)
+    return result

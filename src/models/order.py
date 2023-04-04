@@ -25,3 +25,10 @@ class OrderModel(BaseModel):
     order_code = fields.CharField(default='', blank=True)
     extract = fields.DictField(blank=True, default={})
     status = fields.CharField(default='wait', blank=True)
+
+    # status :
+    #     delivering : 'đang giao'
+    #     success : 'giao thành công'
+    #     fail : 'giao thất bại {kèm lý do}'
+    #     partial_success : 'giao thành công 1 phần'
+    #     cancel : 'huỷ đơn hàng (chưa được giao)'

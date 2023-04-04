@@ -46,3 +46,27 @@ class OrderService(object):
         order = OrderModel.get_by_id(_id, with_cache=False)
         return order
 
+    @staticmethod
+    def update_order(_id: str, status: str, message=None)->bool:
+        if message:
+            _update_data = {
+                'status': status,
+                'extract': {
+                    'message': message
+                }
+            }
+        else:
+            _update_data = {
+                'status': status
+            }
+        
+        result = OrderModel.update_one(
+            filter={
+                '_id': ObjectId(_id),
+            },
+            update_data = _update_data
+        )
+
+        if result:
+            return True
+        return False
