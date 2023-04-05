@@ -4,8 +4,9 @@
 
 from flask import Blueprint
 
-from src.api.store.controlle import store_cr, get_list_store_by_ad
+from src.api.store.controlle import store_cr, get_list_store_by_ad, report_by_store
 
 rest_store = Blueprint('rest_store', __name__, url_prefix='store')
 rest_store.add_url_rule('store-cr', methods=['POST'], view_func=store_cr)
 rest_store.add_url_rule('stores', methods=['GET'], view_func=get_list_store_by_ad)
+rest_store.add_url_rule('report', methods=['POST'], view_func=report_by_store)

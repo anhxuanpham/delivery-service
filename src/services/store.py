@@ -62,3 +62,41 @@ class StoreService(object):
             with_cache=False
         )
         return stores
+    
+    @staticmethod
+    def get_order_by_filter(start_day, end_day, store_id):
+
+        filter = {}
+        filter['created_time'] = {
+            "$gte": start_day,
+            "$lt": end_day
+        }
+        if store_id:
+            filter['store_id'] = {
+                '$in': [store_id],
+            }
+
+        orders = OrderModel.get_by_filter(filter=filter,options={},with_cache=False)
+       
+        total_amount = 0
+        total_order = len(orders)
+        order_success = 0
+        order_fail = 0
+        ship = 0
+
+        if total_order > 0:
+            for order in orders:
+                total_amount = total_amount + order.get('total_amount')
+                ship = ship + order.get('fee_ship')
+                if order.get('status') == 'success':
+                    order_success+=1
+                if order.get('status') == 'fail':
+                    order_fail+=1
+                
+        return {
+            "total_amount": total_amount,
+            "total_order": total_order,
+            "order_success": order_success,
+            "order_fail": order_fail,
+            "ship" : ship
+        }

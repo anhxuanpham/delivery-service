@@ -38,3 +38,12 @@ class GetListStoreResponseSchema(Schema, BaseResponse):
 
     stores = fields.List(fields.Nested(StoreResponseSchema()))
     total = fields.Integer()
+
+
+class ReportByStoreSchema(Schema, BaseResponse):
+    class Meta:
+        unknown = EXCLUDE
+    
+    _id = fields.String(required=True)
+    date = fields.String(required=True)
+    
