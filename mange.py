@@ -3,6 +3,7 @@
 # Author Khanh
 
 # from flask_cors import CORS
+from flask_cors import CORS
 from gevent import monkey
 monkey.patch_all()
 
@@ -10,7 +11,9 @@ from src import create_app
 from flask_script import Manager
 
 app = create_app()
+
 manager = Manager(app)
+cors = CORS(app, resources={r"/v1/*": {"origins": "*"}})
 
 @manager.command
 def run():
