@@ -8,6 +8,7 @@
         -
 """
 
+from flask_cors import CORS
 import sentry_sdk
 from pymodm import connect
 from sentry_sdk import capture_message
@@ -34,6 +35,8 @@ def create_app(config=None, app_name=None, blueprints=None):
         blueprints = DEFAULT_BLUEPRINTS
 
     app = Flask(app_name, instance_relative_config=True)
+    cors = CORS(app, resources={r"/v1/*": {"origins": "*"}})
+
     configure_app(app, config)
     # configure_hook(app)
     configure_blueprints(app, blueprints)
@@ -68,7 +71,6 @@ def configure_extensions(app):
     # flask-sqlalchemy
     # db.init_app(app)
     Logger.debug('Connect with Mysql successfully')
-
     connect(DefaultConfig.MONGODB_URI, connect=False)
     Logger.error('Connect with MongoDB successfully')
     Logger.error({
