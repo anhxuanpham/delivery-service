@@ -35,7 +35,7 @@ def create_app(config=None, app_name=None, blueprints=None):
         blueprints = DEFAULT_BLUEPRINTS
 
     app = Flask(app_name, instance_relative_config=True)
-    cors = CORS(app, resources={r"/v1/*": {"origins": "*"}})
+    CORS(app)
 
     configure_app(app, config)
     # configure_hook(app)
