@@ -4,7 +4,7 @@
 
 import bcrypt
 from flask import g, request
-from schemas.auth import FormUserLoginSchema, UserAuthSchema, FormUserRegisterSchema, FormRefreshToken
+from schemas.auth import FormToken, FormUserLoginSchema, UserAuthSchema, FormUserRegisterSchema, FormRefreshToken
 from src.services.user import UserService
 import vibe_library.decorators as deco
 from vibe_library.exceptions import RequiredAuth
@@ -13,7 +13,7 @@ from vibe_library.handlerespon import make_response
 
 @deco.handle_response()
 @deco.load_data(FormUserLoginSchema)
-def login_cl():
+def login_cl() -> dict:
     """
         - Control the login action of user  
     """
@@ -27,6 +27,15 @@ def login_cl():
         password = _user_data.get('password'),
     )
     return UserAuthSchema.load_response(result)
+
+@deco.handle_response()
+@deco.load_data(FormToken)
+def logout_cl() -> dict:
+
+    _token = g.data 
+    print('-----token------',_token)
+    result = ''
+    return 'hello'
 
 @deco.handle_response()
 @deco.load_data(FormRefreshToken)

@@ -55,3 +55,12 @@ class TokenNotAccept(RequestException):
         )
 
     pass
+
+class InvalidDateFormat(RequestException):
+    def __init__(self, *args: object) -> None:
+        super().__init__(*args)
+        self.response = make_response(
+            error_code='Invalid_Date_Format',
+            status=Constants.STATUS_NOT_OK,
+            msg='This date is not valid'
+        )

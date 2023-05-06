@@ -13,7 +13,8 @@ from vibe_library.handlerespon import make_response
 
 @deco.handle_response()
 @deco.load_data(FormOrderCreateSchema)
-def order_cr():
+@deco.auth_user()
+def order_cr(user):
     """
         - Control the create action of order  
     """
@@ -26,7 +27,8 @@ def order_cr():
 
 
 @deco.handle_response()
-def get_list_order_by_store():
+@deco.auth_user()
+def get_list_order_by_store(user):
 
     store_id = request.args.get('store_id', '', type=str)
     limit = request.args.get('limit', 10, type=int)
@@ -42,7 +44,8 @@ def get_list_order_by_store():
     })
 
 @deco.handle_response()
-def get_detail_order():
+@deco.auth_user()
+def get_detail_order(user):
 
     id = request.args.get('id', '', type=str)
     order = OrderService.order_detail(_id=id)
@@ -51,7 +54,8 @@ def get_detail_order():
 
 @deco.handle_response()
 @deco.load_data(UpdateStatusOrderSchema)
-def update_status():
+@deco.auth_user()
+def update_status(user):
     _data = g.data 
     _id = _data.get('_id')
     status = _data.get('status')

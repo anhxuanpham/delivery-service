@@ -12,13 +12,15 @@ from marshmallow import ValidationError
 
 from .enums import ReqMimetype
 
-from .exceptions import MissingData, request_exception
+from .exceptions import MissingData, RequiredAuth, request_exception
 from flask import request, jsonify, g
 import jwt
 import traceback
 
 from .handlerespon import make_response
 import bson.json_util as bson_json
+from .extensions import redis_single
+
 
 def gen_auth_key(obj_type: str, payload: dict):
     if obj_type == 'user_account':
@@ -129,3 +131,60 @@ def get_token():
             return None, None
         
         return _info.get('payload'), _request_token
+
+
+def verify_token_request(obj_type: str):
+    """
+        - The function that verifies token
+    """
+    _token_info, _request_token = get_token()
+
+    if not _token_info:
+        return {}
+    
+    _token_existed = redis_single.get(gen_auth_key(obj_type=obj_type, payload=_token_info)).decode()
+
+    if _token_existed and _token_existed == _request_token:
+        return _token_info
+
+    return False
+
+
+def gen_decorator(key:str, obj_type: str, is_required: bool = True):
+    def decorator(f):
+        @wraps(f)
+
+        def wrapper(*args, **kwargs):
+
+            if not request:
+                
+                decorator_kwargs = {**kwargs, key: {}}
+                
+                return f(*args, decorator_kwargs)
+            
+            auth_info = verify_token_request(obj_type)
+
+            if not auth_info:
+                raise RequiredAuth
+            
+            if auth_info == {}:
+                if is_required:
+                    raise RequiredAuth
+                else:
+                    auth_info = {}
+
+            decorator_kwargs = {**kwargs, key: auth_info}
+            
+            return f(*args, **decorator_kwargs)
+        
+        return wrapper
+
+    return decorator
+
+
+def auth_user():
+    """
+        - Decorator to check and get user info from user token, Return
+    """
+    return gen_decorator(key='user', obj_type='user_account', is_required=False)
+

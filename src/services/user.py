@@ -40,6 +40,11 @@ class UserService(object):
             'refresh_token': refresh_token
         }
     
+    @classmethod
+    def logout(cls, token: str):
+        
+        return True
+    
     @staticmethod
     def regen_token(payload: dict, obj_type: str) -> tuple:
         token = None

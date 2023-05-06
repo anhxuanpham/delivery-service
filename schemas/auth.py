@@ -39,3 +39,9 @@ class FormRefreshToken(Schema):
         unknown = EXCLUDE
 
     refresh_token = fields.Str(required=True)
+
+class FormToken(Schema):
+    class Meta:
+        unknown = EXCLUDE
+
+    token = fields.Str(required=True)
