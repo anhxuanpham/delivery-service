@@ -29,13 +29,11 @@ def login_cl() -> dict:
     return UserAuthSchema.load_response(result)
 
 @deco.handle_response()
-@deco.load_data(FormToken)
-def logout_cl() -> dict:
+@deco.auth_user()
+def logout_cl(user) -> dict:
 
-    _token = g.data 
-    print('-----token------',_token)
-    result = ''
-    return 'hello'
+    result = UserService.logout()
+    return result
 
 @deco.handle_response()
 @deco.load_data(FormRefreshToken)

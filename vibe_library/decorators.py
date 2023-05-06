@@ -142,7 +142,9 @@ def verify_token_request(obj_type: str):
     if not _token_info:
         return {}
     
-    _token_existed = redis_single.get(gen_auth_key(obj_type=obj_type, payload=_token_info)).decode()
+    _token_existed = redis_single.get(gen_auth_key(obj_type=obj_type, payload=_token_info))
+    if _token_existed:
+        _token_existed = _token_existed.decode()
 
     if _token_existed and _token_existed == _request_token:
         return _token_info

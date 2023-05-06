@@ -2,7 +2,7 @@
 # Created at 24/03/2023
 # Author Khanh
 
-from vibe_library.decorators import get_token_info
+from vibe_library.decorators import get_token_info, get_token
 from src.enums.user import UserAccountStatus
 from src.exceptions.auth import ExceptionUserAccountNotExists, ExceptionUserHasBlocked, ExceptionUserNotExists, TokenNotAccept
 from src.helpers.jwt import gen_user_token, gen_refresh_token, check_refresh_token, remove_token
@@ -40,11 +40,16 @@ class UserService(object):
             'refresh_token': refresh_token
         }
     
-    @classmethod
-    def logout(cls, token: str):
-        
-        return True
-    
+    @staticmethod
+    def logout():
+        _user_info, _request_token = get_token()
+        try:
+            if _user_info:
+                remove_token(payload=_user_info, obj_type='user_account')
+            return True
+        except:
+            return False
+
     @staticmethod
     def regen_token(payload: dict, obj_type: str) -> tuple:
         token = None
