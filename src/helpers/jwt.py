@@ -66,11 +66,13 @@ def gen_user_token(user_info: dict) -> str:
         :param user_info
         :return str
     """
+    
     return gen_token(obj_type='user_account', payload={
         'phone': user_info.get('phone'),
         'email': user_info.get('email'),
         'store_id': user_info.get('store_id'),
         'name': user_info.get('name'),
+        'permission': user_info.get('permission')
     })
 
 @handle_exception()

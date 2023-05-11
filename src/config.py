@@ -23,6 +23,6 @@ class DefaultConfig(BaseConfig):
     
 
     # seconds expired
-    TOKEN_EXP_TIME = int(os.getenv('TOKEN_EXP_TIME', default=300))
+    TOKEN_EXP_TIME = int(os.getenv('TOKEN_EXP_TIME', default=86400))
     # seconds expired
     REFRESH_TOKEN_EXP_TIME = os.getenv('REFRESH_TOKEN_EXP_TIME', default=180)

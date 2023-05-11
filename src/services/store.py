@@ -2,18 +2,27 @@
 # Created at 28/03/2023
 # Author Khanh
 
+from src.exceptions.store import ExceptionStoreExists
 from src.models.store import StoreModel
 from src.models.order import OrderModel
 
 
 class StoreService(object):
 
-    @staticmethod
-    def save(payload: dict):
+    @classmethod
+    def save(cls, payload: dict):
         # value = {
         #     **payload
         # }
-        return StoreModel.insert_data(payload=payload)
+        _phone = payload.get('phone')
+        find_store = StoreModel.check_is_exist(filter={
+            'phone': _phone
+        }, with_cache=False)
+
+        if find_store == True:
+            raise ExceptionStoreExists
+        else:
+            return StoreModel.insert_data(payload=payload)
     
     @classmethod
     def get_list_stores( self ,offset: int, limit: int ) -> list:
