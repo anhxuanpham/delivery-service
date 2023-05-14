@@ -233,3 +233,10 @@ class BaseModel(MongoModel):
             # capture_exception()
             traceback.print_exc()
             return False
+        
+    @classmethod
+    def total_count(cls):
+        try:
+            return cls.objects.count()
+        except cls.DoesNotExist:
+            return False
