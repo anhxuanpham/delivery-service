@@ -50,10 +50,12 @@ class StoreService(object):
                 )
 
         stores = self.get_stores(offset=offset, limit=limit)
+
+        store_total = StoreModel.total_count()
         if len(stores) < limit:
-            return stores, offset + len(stores)
+            return stores, store_total, offset + len(stores)
         else:
-            return stores, offset + limit + limit // 2
+            return stores, store_total, offset + limit + limit // 2
 
 
     @staticmethod
@@ -86,7 +88,7 @@ class StoreService(object):
             }
 
         orders = OrderModel.get_by_filter(filter=filter,options={},with_cache=False)
-       
+
         total_amount = 0
         total_order = len(orders)
         order_success = 0

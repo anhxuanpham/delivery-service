@@ -37,6 +37,7 @@ class GetListStoreResponseSchema(Schema, BaseResponse):
         unknown = EXCLUDE
 
     stores = fields.List(fields.Nested(StoreResponseSchema()))
+    store_total = fields.Integer()
     total = fields.Integer()
 
 

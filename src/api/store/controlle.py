@@ -29,13 +29,14 @@ def get_list_store_by_ad(user):
     limit = request.args.get('limit', 10, type=int)
     offset = request.args.get('offset', 0, type=int)
 
-    stores, total = StoreService.get_list_stores(offset=offset, limit=limit)
+    stores, store_total, total = StoreService.get_list_stores(offset=offset, limit=limit)
 
     if not isinstance(stores, list):
         stores = []
     
     return GetListStoreResponseSchema.load_response({
         'stores': stores,
+        'store_total': store_total,
         'total': total
     })
 
