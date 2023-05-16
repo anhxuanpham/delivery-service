@@ -70,3 +70,30 @@ class OrderService(object):
         if result:
             return True
         return False
+
+
+    @staticmethod
+    def get_all_list_orders(offset: int, limit: int, status: str):
+        filter = {}
+
+        if status:
+            filter['status'] = status
+
+        order_total = OrderModel.total_count()
+
+        orders = OrderModel.get_by_filter(
+            filter=filter,
+            options={
+                'limit': limit,
+                'offset': offset,
+                'sort': {
+                    'created_time': -1
+                }
+            },
+            with_cache=False
+        )
+        if len(orders) < limit:
+            return orders, order_total, offset + len(orders)
+        else:
+            return orders, order_total, offset + limit + limit // 2
+

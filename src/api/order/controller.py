@@ -4,7 +4,8 @@
 
 import bcrypt
 from flask import g, request
-from schemas.order import FormOrderCreateSchema, FormGetOrdersSchema, GetListOrderResponseSchema, OrderDetalResponseSchema, UpdateStatusOrderSchema
+from schemas.order import FormOrderCreateSchema, FormGetOrdersSchema, GetAllOrderResponseSchema, GetListOrderResponseSchema, OrderDetalResponseSchema, UpdateStatusOrderSchema
+from src.exceptions.auth import InvalidAdminPermission
 from src.services.order import OrderService
 from src.services.user import UserService
 import vibe_library.decorators as deco
@@ -63,3 +64,21 @@ def update_status(user):
 
     result = OrderService.update_order(_id=_id, status=status, message=message)
     return result
+
+
+@deco.handle_response()
+@deco.auth_user()
+def get_list_order_by_admin(user):
+    if user.get('permission') != 'admin':
+        raise InvalidAdminPermission
+
+    limit = request.args.get('limit', 10, type=int)
+    offset = request.args.get('offset', 0, type=int)
+    status = request.args.get('status', '', type=str)
+
+    orders, order_total, total = OrderService.get_all_list_orders(status=status, offset=offset, limit=limit)
+    return GetAllOrderResponseSchema.load_response({
+        'orders': orders,
+        'order_total': order_total,
+        'total': total
+    })
